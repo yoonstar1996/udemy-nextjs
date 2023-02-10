@@ -16,6 +16,7 @@ export default function Todo(props) {
     <>
       <div className="card">
         <h2>{props.text}</h2>
+        <p>...</p>
         <div className="actions">
           <button className="btn" onClick={deleteHandler}>
             Delete
