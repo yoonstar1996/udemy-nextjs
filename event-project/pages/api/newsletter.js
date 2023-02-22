@@ -1,4 +1,6 @@
-export default function handler(req, res) {
+import { insertDocument, connectDatabase } from "../../helpers/db-util";
+
+export default async function handler(req, res) {
   if (req.method === "POST") {
     const userEmail = req.body.email;
 
@@ -6,8 +8,22 @@ export default function handler(req, res) {
       res.status(422).json({ message: "Invalid eamil address." });
       return;
     }
+    let client;
+    try {
+      client = connectDatabase();
+    } catch (error) {
+      res.status(500).json({ message: "Connection to the database failed!" });
+      return;
+    }
 
-    console.log(userEmail);
+    try {
+      await insertDocument(client, "newsletter", { email: userEmail });
+      client.close();
+    } catch (error) {
+      res.status(500).json({ message: "Inserting data failed!" });
+      return;
+    }
+
     res.status(201).json({ message: "Signed Up!" });
   }
 }
